@@ -661,12 +661,12 @@
         win_result   = won ? "WIN" : "LOSS";
 
         md.predHistory.unshift({
-          period: md.lastPeriod.slice(-6),
+          period: md.lastPeriod.slice(-8),
           actual: actual,
           predicted: prevPred,
           result: won ? "Win" : "Loss",
         });
-        if (md.predHistory.length > 20) md.predHistory.pop();
+        if (md.predHistory.length > 20000) md.predHistory.pop();
 
         if (md.logicMode === 1) {
           if (won) { md.l1LossStreak = 0; }
