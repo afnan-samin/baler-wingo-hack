@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>EliteX TRADERS Widget</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  color-scheme: light only;
+  --accent-big:   #00e5a0;
+  --accent-small: #ff4d6d;
+  --accent-blue:  #4fc3f7;
+  --widget-w: 270px;
+  --nav-h: 58px;
+  --hist-bg: #07091a;
+  --hist-card: rgba(15,18,50,0.92);
+  --hist-border: rgba(100,120,255,0.18);
+  --neon-blue: #4fc3f7;
+  --neon-green: #00e5a0;
+  --neon-red: #ff4d6d;
+  --neon-violet: #b06aff;
+}
+html { color-scheme: light; }
+body {
+  font-family: "Exo 2", sans-serif;
+  background: transparent;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── GATE ── */
+#password-gate {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  z-index: 9999;
+}
+.gate-card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 20px;
+  padding: 32px 28px;
+  width: 320px;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  text-align: center;
+}
+.gate-logo-img {
+  width: 70px; height: 70px;
+  border-radius: 50%; object-fit: cover;
+  margin: 0 auto 10px; display: block;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  border: 2px solid rgba(255,255,255,0.15);
+}
+.gate-logo { font-family: "Rajdhani",sans-serif; font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 0.3px; margin-bottom: 4px; }
+.gate-sub { font-size: 11px; color: rgba(255,255,255,0.45); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px; }
+.gate-tg-notice { background: rgba(79,195,247,0.1); border: 1px solid rgba(79,195,247,0.3); border-radius: 10px; padding: 10px 12px; margin-bottom: 16px; font-size: 12px; color: rgba(255,255,255,0.75); line-height: 1.5; }
+.gate-tg-notice a { color: var(--accent-blue); font-weight: 700; text-decoration: none; }
+.gate-tg-btn-full { display: block; width: 100%; text-align: center; padding: 12px; background: linear-gradient(135deg,#29b6f6,#0288d1); border-radius: 11px; color: #fff; font-family: "Exo 2",sans-serif; font-size: 14px; font-weight: 700; text-decoration: none; letter-spacing: 0.5px; transition: opacity 0.2s; box-sizing: border-box; margin-top: 4px; }
+.gate-tg-btn-full:hover { opacity: 0.85; }
+.gate-input-wrap { position: relative; margin-bottom: 12px; }
+.gate-input { width: 100%; padding: 11px 44px 11px 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.15); border-radius: 11px; color: #fff; font-family: "Exo 2",sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.gate-input:focus { border-color: rgba(79,195,247,0.6); }
+.gate-input::placeholder { color: rgba(255,255,255,0.3); }
+.toggle-pw { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: rgba(255,255,255,0.4); font-size: 15px; background: none; border: none; }
+.gate-btn { width: 100%; padding: 12px; background: linear-gradient(135deg,#4fc3f7,#0288d1); border: none; border-radius: 11px; color: #fff; font-family: "Exo 2",sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 1px; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s, transform 0.1s; }
+.gate-btn:hover { opacity: 0.88; }
+.gate-btn:active { transform: scale(0.97); }
+.gate-error { margin-top: 12px; font-size: 12px; color: #ff6b6b; min-height: 16px; }
+.brand-links a { font-size: 12px; color: var(--accent-blue); text-decoration: none; letter-spacing: 0.1px; opacity: 0.8; transition: opacity 0.2s; }
+.brand-links a:hover { opacity: 1; text-decoration: underline; }
+
+/* ── BOTTOM NAVIGATION ── */
+#bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; height: var(--nav-h);
+  background: rgba(7,9,26,0.97);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(100,120,255,0.2);
+  display: none;
+  z-index: 8500;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.5);
+}
+.nav-tabs {
+  display: flex; height: 100%;
+}
+.nav-tab {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; cursor: pointer;
+  color: rgba(255,255,255,0.38);
+  font-family: "Rajdhani",sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  transition: color 0.2s;
+  border: none; background: none;
+  padding: 0;
+}
+.nav-tab svg { width: 20px; height: 20px; transition: filter 0.2s; }
+.nav-tab.active { color: var(--neon-blue); }
+.nav-tab.active svg { filter: drop-shadow(0 0 6px rgba(79,195,247,0.8)); }
+
+/* ── APP SECTIONS ── */
+#section-website, #section-history, #section-calculator {
+  position: fixed; inset: 0;
+  bottom: var(--nav-h);
+  display: none;
+  overflow: hidden;
+}
+#section-website.active, #section-history.active, #section-calculator.active { display: block; }
+
+/* ── WEBSITE SECTION (iframe + widget) ── */
+#section-website iframe {
+  position: absolute; inset: 0; width: 100%; height: 100%; border: none;
+}
+
+/* ── WIDGET ── */
+#floating-widget {
+  position: absolute; top: 80px; right: 20px;
+  width: var(--widget-w); z-index: 9000; display: none;
+  touch-action: none;
+}
+.widget-outer-btns { display: flex; justify-content: flex-end; gap: 6px; margin-bottom: 5px; padding-right: 2px; }
+.outer-btn { width: 26px; height: 26px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.15s, opacity 0.15s; backdrop-filter: blur(12px); }
+.outer-btn:hover { transform: scale(1.12); opacity: 0.9; }
+.outer-btn:active { transform: scale(0.95); }
+.outer-btn-hide { background: rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.25); }
+.outer-btn-exit { background: rgba(255,77,109,0.25); border: 1px solid rgba(255,77,109,0.45); }
+.widget-card {
+  background: rgba(15,12,41,0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.18); border-radius: 18px; overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05) inset, 0 1px 0 rgba(255,255,255,0.15) inset;
+  animation: widgetIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  cursor: grab;
+}
+.widget-card:active { cursor: grabbing; }
+@keyframes widgetIn {
+  from { opacity:0; transform:scale(0.8) translateY(-10px); }
+  to   { opacity:1; transform:scale(1)   translateY(0); }
+}
+.widget-header { padding: 7px 12px 6px; background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 9px; }
+.header-logo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
+.widget-brand { display: flex; flex-direction: column; gap: 1px; flex: 1; }
+.brand-name { font-family: "Rajdhani",sans-serif; font-size: 15px; font-weight: 800; color: #fff; letter-spacing: 0.3px; text-transform: uppercase; cursor: pointer; }
+.brand-link a { font-size: 10.5px; color: var(--accent-blue); text-decoration: none; letter-spacing: 0.5px; opacity: 0.8; transition: opacity 0.2s; }
+.brand-link a:hover { opacity: 1; text-decoration: underline; }
+.widget-body { padding: 8px 12px; }
+.market-tabs { display: flex; gap: 6px; margin-bottom: 6px; }
+.market-tab { flex: 1; text-align: center; padding: 4px 6px; font-family: "Rajdhani",sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; border-radius: 20px; cursor: pointer; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.4); transition: all 0.2s; }
+.market-tab.active { background: rgba(79,195,247,0.15); border-color: rgba(79,195,247,0.4); color: var(--accent-blue); }
+.top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+.mode-badge { font-family: "Rajdhani",sans-serif; font-size: 11px; font-weight: 700; color: var(--accent-blue); background: rgba(79,195,247,0.1); border: 1px solid rgba(79,195,247,0.25); border-radius: 20px; padding: 2px 10px; letter-spacing: 1px; text-transform: uppercase; }
+.step-calc { font-family: "Rajdhani",sans-serif; font-size: 11px; font-weight: 700; color: rgba(0,241,255,1); background: rgba(79,195,247,0.1); border: 1px solid rgba(79,195,247,0.25); border-radius: 20px; padding: 2px 10px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 0 6px rgba(0,241,255,0.6), 0 0 12px rgba(0,241,255,0.4), inset 0 0 6px rgba(0,241,255,0.3); text-shadow: 0 0 5px rgba(0,241,255,0.9), 0 0 10px rgba(0,241,255,0.7); cursor: pointer; }
+.step-calc:hover { box-shadow: 0 0 10px rgba(0,241,255,1), 0 0 20px rgba(0,241,255,0.8), 0 0 30px rgba(0,241,255,0.6); }
+
+/* Prediction block */
+.prediction-block { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px; text-align: center; margin-bottom: 7px; position: relative; overflow: hidden; }
+.prediction-block::before { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%,rgba(79,195,247,0.07),transparent 70%); pointer-events: none; }
+.period-label { font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 1px; }
+.period-value { font-family: "Rajdhani",sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 2px; color: #fff; margin-bottom: 6px; }
+.predict-row { display: flex; align-items: center; justify-content: center; gap: 8px; position: relative; }
+.predict-label { font-family: "Rajdhani",sans-serif; font-size: 30px; font-weight: 700; letter-spacing: 3px; line-height: 1; transition: all 0.3s ease; }
+.predict-label.BIG   { color: var(--accent-big);   text-shadow: 0 0 22px rgba(0,229,160,0.55); }
+.predict-label.SMALL { color: var(--accent-small); text-shadow: 0 0 22px rgba(255,77,109,0.55); }
+.predict-label.WAIT  { color: rgba(255,255,255,0.28); text-shadow: none; font-size: 20px; }
+/* History icon button in prediction block */
+.hist-icon-btn {
+  position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  width: 28px; height: 28px; border-radius: 8px; border: 1px solid rgba(79,195,247,0.3);
+  background: rgba(79,195,247,0.1); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
+}
+.hist-icon-btn:hover { background: rgba(79,195,247,0.22); box-shadow: 0 0 8px rgba(79,195,247,0.4); }
+.hist-icon-btn svg { width: 14px; height: 14px; color: var(--neon-blue); }
+.logic-badge { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; display: inline-block; margin-bottom: 4px; }
+.logic-badge.l1 { background: rgba(79,195,247,0.12); color: var(--accent-blue); border: 1px solid rgba(79,195,247,0.3); }
+.logic-badge.l2 { background: rgba(255,165,0,0.15); color: #ffa500; border: 1px solid rgba(255,165,0,0.35); }
+.logic-text { font-size: 9px; color: rgba(255,255,255,0.3); letter-spacing: 0.5px; margin-top: 4px; }
+.countdown-row { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 7px; }
+.countdown-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-blue); animation: blink 1s ease-in-out infinite; }
+@keyframes blink { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.35; transform:scale(0.65); } }
+.countdown-val { font-family: "Rajdhani",sans-serif; font-size: 15px; font-weight: 700; color: var(--accent-blue); letter-spacing: 1px; min-width: 30px; text-align: center; }
+.countdown-unit { font-size: 9px; color: rgba(255,255,255,0.28); letter-spacing: 1px; text-transform: uppercase; }
+
+/* Status bar */
+.status-bar { display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; margin: 0; background: rgba(0,0,0,0.65); border: 1px solid rgba(0,255,255,0.3); border-radius: 8px; backdrop-filter: blur(6px); box-shadow: 0 0 8px rgba(0,255,255,0.4), inset 0 0 6px rgba(0,255,255,0.2); }
+.status-left { display: flex; align-items: center; gap: 6px; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #00ff88; box-shadow: 0 0 6px #00ff88, 0 0 12px #00ff88; animation: pulse 1.2s infinite; }
+.status-dot.offline { background: var(--accent-small); box-shadow: none; animation: none; }
+@keyframes pulse { 0%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.4); opacity:0.6; } 100%{ transform:scale(1); opacity:1; } }
+.status-text { font-family: "Rajdhani",sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #00ffff; text-shadow: 0 0 6px #00ffff; }
+.time-value { font-family: "Rajdhani",sans-serif; font-size: 12px; font-weight: 700; color: #ffeb3b; text-shadow: 0 0 6px #ffeb3b, 0 0 10px #ffeb3b; letter-spacing: 1px; }
+
+/* Mini pill */
+#mini-pill { position: absolute; top: 80px; right: 20px; z-index: 9000; display: none; cursor: grab; touch-action: none; }
+#mini-pill:active { cursor: grabbing; }
+.pill-inner { background: rgba(15,12,41,0.9); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); border-radius: 10px; padding: 8px 14px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.45); cursor: pointer; transition: transform 0.15s; }
+.pill-inner:hover { transform: scale(1.03); }
+.pill-logo { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0; }
+.pill-info { display: flex; flex-direction: column; gap: 2px; }
+.pill-brand { font-family: "Rajdhani",sans-serif; font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.85); }
+.pill-period { font-family: "Rajdhani",sans-serif; font-size: 11px; letter-spacing: 2px; color: #fff; }
+.pill-label { font-family: "Rajdhani",sans-serif; font-size: 16px; font-weight: 700; letter-spacing: 1px; margin-left: auto; }
+.pill-label.BIG   { color: var(--accent-big); }
+.pill-label.SMALL { color: var(--accent-small); }
+.pill-label.WAIT  { color: rgba(255,255,255,0.4); font-size: 12px; }
+
+/* Admin panel */
+#admin-panel { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); z-index: 9990; }
+.admin-card { background: rgba(15,12,41,0.92); backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 32px; width: 340px; box-shadow: 0 24px 64px rgba(0,0,0,0.65); }
+.admin-title { font-family: "Rajdhani",sans-serif; font-size: 18px; font-weight: 700; color: #fff; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; text-align: center; }
+.admin-field { margin-bottom: 16px; }
+.admin-field label { display: block; font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+.admin-input { width: 100%; padding: 11px 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; color: #fff; font-family: "Exo 2",sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.admin-input:focus { border-color: rgba(79,195,247,0.5); }
+.admin-input::placeholder { color: rgba(255,255,255,0.2); }
+.admin-row { display: flex; gap: 10px; margin-top: 6px; }
+.admin-save { flex: 1; padding: 11px; background: linear-gradient(135deg,#00c389,#00e5a0); border: none; border-radius: 10px; color: #0f1e15; font-family: "Exo 2",sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; cursor: pointer; text-transform: uppercase; transition: opacity 0.2s; }
+.admin-save:hover { opacity: 0.88; }
+.admin-close { padding: 11px 20px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: rgba(255,255,255,0.6); font-family: "Exo 2",sans-serif; font-size: 13px; cursor: pointer; text-transform: uppercase; transition: background 0.2s; }
+.admin-close:hover { background: rgba(255,255,255,0.12); }
+.admin-msg { margin-top: 12px; font-size: 12px; color: var(--accent-big); min-height: 18px; text-align: center; }
+
+/* Toast */
+#toast { position: fixed; bottom: calc(var(--nav-h) + 14px); left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(15,12,41,0.92); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.15); border-radius: 40px; padding: 10px 22px; font-size: 13px; color: #fff; letter-spacing: 0.5px; opacity: 0; transition: opacity 0.3s, transform 0.3s; z-index: 99999; pointer-events: none; white-space: nowrap; }
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── HISTORY SECTION ── */
+#section-history {
+  background: var(--hist-bg);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+/* Watermark */
+.hist-watermark {
+  position: fixed; top: 0; left: 0; right: 0;
+  bottom: var(--nav-h);
+  pointer-events: none; z-index: 0;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.hist-watermark-text {
+  font-family: "Times New Roman", Times, serif;
+  font-size: clamp(32px, 8vw, 72px);
+  font-weight: bold;
+  color: rgba(183, 247, 6, 0.363);
+  white-space: nowrap;
+  transform: rotate(-35deg);
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  user-select: none;
+}
+.hist-content { position: relative; z-index: 1; padding: 14px 12px; padding-bottom: 8px; }
+
+/* History header */
+.hist-page-header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 10px 12px 6px;
+  position: sticky; top: 0; z-index: 10;
+  background: linear-gradient(180deg, rgba(7,9,26,1) 80%, transparent);
+}
+.hist-page-title {
+  font-family: "Rajdhani",sans-serif;
+  font-size: 16px; font-weight: 700; color: #fff;
+  letter-spacing: 2px; text-transform: uppercase;
+  text-align: center;
+  grid-column: 2;
+}
+.hist-streak-box {
+  display: flex; flex-direction: row; gap: 10px;
+  grid-column: 1;
+}
+.hist-streak-text {
+  font-family: "Rajdhani",sans-serif; font-size: 15px; font-weight: 700;
+  letter-spacing: 0.5px; text-transform: uppercase;
+  line-height: 1.3;
+}
+.hist-streak-text.win  { color: var(--neon-green); }
+.hist-streak-text.loss { color: var(--neon-red); }
+.hist-market-badge {
+  font-family: "Rajdhani",sans-serif; font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  background: rgba(79,195,247,0.1); border: 1px solid rgba(79,195,247,0.3);
+  color: var(--neon-blue); letter-spacing: 1px; text-transform: uppercase;
+}
+.hist-market-switch { display: flex; gap: 6px; margin-left: auto; }
+.hm-tab { font-family: "Rajdhani",sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.8px; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.85); cursor: pointer; transition: all 0.2s; text-transform: uppercase; }
+.hm-tab.active { background: rgba(79,195,247,0.15); border-color: rgba(79,195,247,0.4); color: var(--neon-blue); }
+
+/* History tabs */
+.hist-tabs-row {
+  display: flex; gap: 0;
+  margin: 8px 12px 10px;
+  border-radius: 10px; overflow: hidden;
+  border: 1px solid rgba(100,120,255,0.2);
+}
+.hist-tab {
+  flex: 1; padding: 9px 6px;
+  font-family: "Rajdhani",sans-serif; font-size: 12px; font-weight: 700;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  text-align: center; cursor: pointer;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255,255,255,0.03);
+  border: none;
+  transition: all 0.2s;
+}
+.hist-tab:first-child { border-right: 1px solid rgba(100,120,255,0.2); }
+.hist-tab.active { background: rgba(79,195,247,0.12); color: var(--neon-blue); }
+
+/* All History table */
+.all-hist-wrap { padding: 0 12px 8px; }
+.hist-table-head {
+  display: grid; grid-template-columns: 1fr 0.7fr 0.9fr 1fr 0.8fr;
+  padding: 6px 8px;
+  background: rgba(79,195,247,0.06);
+  border: 1px solid rgba(79,195,247,0.12);
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 1px;
+}
+.hist-table-head span { font-family: "Rajdhani",sans-serif; font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.85); letter-spacing: 1.2px; text-transform: uppercase; }
+.hist-table-body { display: flex; flex-direction: column; gap: 1px; }
+.hist-row {
+  display: grid; grid-template-columns: 1fr 0.7fr 0.9fr 1fr 0.8fr;
+  padding: 5px 8px;
+  background: rgba(15,18,50,0.5);
+  border: 1px solid rgba(100,120,255,0.06);
+  border-radius: 4px;
+  align-items: center;
+}
+.hist-row:hover { background: rgba(79,195,247,0.05); }
+.hist-row span { font-family: "Rajdhani",sans-serif; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.5px; }
+.hist-period { font-size: 13.5px !important; color: rgba(255,255,255,0.85) !important; }
+/* Number color rules */
+.num-green { color: var(--neon-green) !important; text-shadow: 0 0 8px rgba(0,229,160,0.4); }
+.num-red { color: var(--neon-red) !important; text-shadow: 0 0 8px rgba(255,77,109,0.4); }
+.num-red-violet { color: var(--neon-red) !important; text-shadow: 0 0 8px rgba(255,77,109,0.4), 0 0 16px rgba(176,106,255,0.3); font-weight: 800 !important; }
+.num-green-violet { color: var(--neon-green) !important; text-shadow: 0 0 8px rgba(0,229,160,0.4), 0 0 16px rgba(176,106,255,0.3); font-weight: 800 !important; }
+.bs-big { color: var(--neon-green) !important; }
+.bs-small { color: var(--neon-red) !important; }
+.pred-big { color: var(--neon-green) !important; }
+.pred-small { color: var(--neon-red) !important; }
+.pred-wait { color: rgba(255,255,255,0.28) !important; }
+.res-win { color: var(--neon-green) !important; font-weight: 800 !important; }
+.res-loss { color: var(--neon-red) !important; font-weight: 800 !important; }
+.hist-empty { text-align: center; padding: 30px 0; font-size: 12px; color: rgba(255,255,255,0.85); letter-spacing: 1px; font-family: "Rajdhani",sans-serif; }
+.hist-count-badge { font-family: "Rajdhani",sans-serif; font-size: 10px; color: rgba(255,255,255,0.85); letter-spacing: 1px; text-align: right; padding: 4px 8px 0; }
+
+/* After Number section */
+.after-num-wrap { padding: 0 12px 8px; }
+.num-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 6px; margin-bottom: 12px;
+}
+.num-btn {
+  height: 36px; border-radius: 8px; border: 1px solid rgba(100,120,255,0.2);
+  background: rgba(15,18,50,0.6);
+  font-family: "Rajdhani",sans-serif; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.7);
+}
+.num-btn:hover { background: rgba(79,195,247,0.12); border-color: rgba(79,195,247,0.35); }
+.num-btn.selected { border-color: var(--neon-blue); background: rgba(79,195,247,0.15); box-shadow: 0 0 12px rgba(79,195,247,0.3); }
+.num-btn.n-green { color: var(--neon-green); }
+.num-btn.n-red { color: var(--neon-red); }
+.num-btn.n-red-violet { color: var(--neon-red); text-shadow: 0 0 8px rgba(176,106,255,0.5); }
+.num-btn.n-green-violet { color: var(--neon-green); text-shadow: 0 0 8px rgba(176,106,255,0.5); }
+
+.after-title { font-family: "Rajdhani",sans-serif; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.4); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+.after-table-head {
+  display: grid; grid-template-columns: 1fr 0.7fr 0.9fr 0.8fr;
+  padding: 6px 8px;
+  background: rgba(79,195,247,0.06); border: 1px solid rgba(79,195,247,0.12);
+  border-radius: 8px 8px 0 0; margin-bottom: 1px;
+}
+.after-table-head span { font-family: "Rajdhani",sans-serif; font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.3); letter-spacing: 1.2px; text-transform: uppercase; }
+.after-table-body { display: flex; flex-direction: column; gap: 1px; }
+.after-row {
+  display: grid; grid-template-columns: 1fr 0.7fr 0.9fr 0.8fr;
+  padding: 5px 8px;
+  background: rgba(15,18,50,0.5); border: 1px solid rgba(100,120,255,0.06); border-radius: 4px;
+  align-items: center;
+}
+.after-row span { font-family: "Rajdhani",sans-serif; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); letter-spacing: 0.5px; }
+.after-hint { font-family: "Rajdhani",sans-serif; font-size: 11px; color: rgba(255,255,255,0.25); text-align: center; padding: 20px 0; letter-spacing: 1px; }
+
+/* ── CALCULATOR SECTION ── */
+#section-calculator iframe {
+  position: absolute; inset: 0; width: 100%; height: 100%; border: none;
+}
+
+/* Custom popup overlay */
+#custom-popup-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(6px);
+  z-index: 99000; display: none; align-items: center; justify-content: center;
+}
+#custom-popup-overlay.show { display: flex; }
+.custom-popup-card {
+  background: rgba(15,12,41,0.96); backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.15); border-radius: 20px;
+  padding: 28px 24px; width: min(320px, 90vw);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+  text-align: center;
+}
+.custom-popup-title { font-family: "Rajdhani",sans-serif; font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.custom-popup-msg { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 18px; }
+.custom-popup-btn { padding: 10px 28px; background: linear-gradient(135deg,#4fc3f7,#0288d1); border: none; border-radius: 10px; color: #fff; font-family: "Exo 2",sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; transition: opacity 0.2s; }
+.custom-popup-btn:hover { opacity: 0.88; }
+
+@media (max-width: 480px) {
+  :root { --widget-w: 245px; }
+  .gate-card { width: 290px; padding: 26px 20px; }
+  .admin-card { width: 300px; padding: 24px; }
+  .num-grid { grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .hist-table-head, .hist-row { grid-template-columns: 1fr 0.6fr 0.8fr 0.9fr 0.7fr; font-size: 9.5px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── PASSWORD GATE ── -->
+<div id="password-gate">
+  <div class="gate-card">
+    <img class="gate-logo-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23302b63'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-size='38' font-family='serif'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E" alt="EliteX Logo">
+    <div class="gate-logo">EliteX TRADERS</div>
+    <div class="gate-sub">WinGO Prediction Widget</div>
+    <div id="gate-step1">
+      <div class="gate-tg-notice">
+        To access the widget, you must first join our Telegram channel.<br>
+        <a href="https://t.me/EliteX_TRADERS" target="_blank" rel="noopener noreferrer">t.me/EliteX_TRADERS</a>
+      </div>
+      <a class="gate-tg-btn-full" href="https://t.me/EliteX_TRADERS" target="_blank" rel="noopener noreferrer" onclick="showPasswordStep()">
+        Join Channel &amp; Continue
+      </a>
+    </div>
+    <div id="gate-step2" style="display:none;">
+      <div class="gate-tg-notice" style="margin-bottom:14px;">Already joined? Enter your access password below.</div>
+      <div class="gate-input-wrap">
+        <input class="gate-input" type="password" id="gate-pw-input" placeholder="Enter access password" autocomplete="off">
+        <button class="toggle-pw" onclick="togglePwVis('gate-pw-input',this)" tabindex="-1">&#9673;</button>
+      </div>
+      <button class="gate-btn" onclick="checkPassword()">Unlock</button>
+      <div class="gate-error" id="gate-error"></div>
+      <div class="brand-links" style="margin-top:10px;">
+        <a href="https://t.me/afnan633" target="_blank" rel="noopener noreferrer">Developer: AFNAN SAMIN</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── BOTTOM NAV ── -->
+<nav id="bottom-nav">
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="nav-website" onclick="switchSection('website')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+      Website
+    </button>
+    <button class="nav-tab" id="nav-history" onclick="switchSection('history')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+      History
+    </button>
+    <button class="nav-tab" id="nav-calculator" onclick="switchSection('calculator')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="2" width="16" height="20" rx="2"/>
+        <line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/>
+        <line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/>
+        <line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/>
+        <line x1="14" y1="18" x2="16" y2="18"/>
+      </svg>
+      Calculator
+    </button>
+  </div>
+</nav>
+
+<!-- ── WEBSITE SECTION ── -->
+<div id="section-website" class="active">
+  <iframe id="main-iframe" src="https://www.hgnice14.com/#/register?invitationCode=363381850111" allow="fullscreen"></iframe>
+
+  <!-- FLOATING WIDGET inside website section -->
+  <div id="floating-widget">
+    <div class="widget-outer-btns">
+      <button class="outer-btn outer-btn-hide" onclick="minimizeWidget()" title="Minimize">
+        <svg width="12" height="3" viewBox="0 0 12 3" fill="none"><rect x="0" y="0.5" width="12" height="2" rx="1" fill="rgba(255,255,255,0.85)"/></svg>
+      </button>
+      <button class="outer-btn outer-btn-exit" onclick="exitWidget()" title="Close">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
+          <line x1="1" y1="1" x2="10" y2="10" stroke="#ff4d6d" stroke-width="2" stroke-linecap="round"/>
+          <line x1="10" y1="1" x2="1" y2="10" stroke="#ff4d6d" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="widget-card">
+      <div class="widget-header">
+        <img class="header-logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23302b63'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-size='38' font-family='serif'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E" alt="logo">
+        <div class="widget-brand">
+          <div class="brand-name" id="brand-name-click">EliteX TRADERS</div>
+          <div class="brand-link">
+            <a href="https://t.me/EliteX_TRADERS" target="_blank" rel="noopener noreferrer">Join: t.me/EliteX_TRADERS</a>
+          </div>
+        </div>
+      </div>
+      <div class="widget-body">
+        <div class="market-tabs">
+          <div class="market-tab active" id="tab-30s" onclick="switchMarket('30s')">30 Sec</div>
+          <div class="market-tab" id="tab-1m" onclick="switchMarket('1m')">1 Min</div>
+        </div>
+        <div class="top-row">
+          <div class="mode-badge" id="mode-badge">WinGO 30sec</div>
+          <div class="step-calc" onclick="switchSection('calculator')" title="Open Calculator">Step Calculator</div>
+        </div>
+        <div class="prediction-block">
+          <div class="period-label">Period</div>
+          <div class="period-value" id="period-number">Loading...</div>
+          <div style="text-align:center; margin-bottom:2px;">
+            <span class="logic-badge l1" id="logic-badge">Logic 1</span>
+          </div>
+          <div class="predict-row">
+            <div class="predict-label WAIT" id="predict-label" style="flex:1;text-align:center;">WAIT</div>
+            <button class="hist-icon-btn" onclick="switchSection('history')" title="View History">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="10"/>
+              </svg>
+            </button>
+          </div>
+          <div class="logic-text" id="logic-text">Analyzing...</div>
+          <div class="countdown-row">
+            <div class="countdown-dot"></div>
+            <span class="countdown-val" id="countdown-val">--</span>
+            <span class="countdown-unit">sec left</span>
+          </div>
+        </div>
+        <div class="status-bar">
+          <div class="status-left">
+            <div class="status-dot" id="status-dot"></div>
+            <span class="status-text" id="status-text">Connecting...</span>
+          </div>
+          <div class="time-value" id="live-time">--:--:-- --</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MINI PILL -->
+  <div id="mini-pill" onclick="restoreWidget()">
+    <div class="pill-inner">
+      <img class="pill-logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23302b63'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-size='38' font-family='serif'%3E%F0%9F%91%91%3C/text%3E%3C/svg%3E" alt="logo">
+      <div class="pill-info">
+        <span class="pill-brand">EliteX TRADERS</span>
+        <span class="pill-period" id="pill-period">P: ------</span>
+      </div>
+      <span class="pill-label WAIT" id="pill-label">--</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── HISTORY SECTION ── -->
+<div id="section-history">
+  <div class="hist-watermark" aria-hidden="true">
+    <span class="hist-watermark-text">AFNAN SAMIN</span>
+  </div>
+
+  <div class="hist-page-header">
+    <div class="hist-streak-box">
+     <span class="hist-streak-text win"  id="streak-win-label">Win streak: 0</span>
+      <span class="hist-streak-text loss" id="streak-loss-label">Loss streak: 0</span>
+    </div>
+    <span class="hist-page-title">History</span>
+   <div class="hist-market-switch">
+     <div class="hm-tab active" id="hm-30s" onclick="switchHistMarket('30s')">30s</div>
+     <div class="hm-tab" id="hm-1m" onclick="switchHistMarket('1m')">1m</div>
+   </div>
+  </div>  
+
+  <div class="hist-tabs-row">
+    <button class="hist-tab active" id="htab-all" onclick="switchHistTab('all')">All History</button>
+    <button class="hist-tab" id="htab-after" onclick="switchHistTab('after')">After Number</button>
+  </div>
+
+  <!-- All History sub-section -->
+  <div id="hist-all-section">
+    <div class="all-hist-wrap">
+      <div class="hist-count-badge" id="hist-count-badge">0 records</div>
+      <div class="hist-table-head">
+        <span>Period</span>
+        <span>No.</span>
+        <span>B/S</span>
+        <span>Prediction</span>
+        <span>Result</span>
+      </div>
+      <div class="hist-table-body" id="hist-all-body">
+        <div class="hist-empty">Waiting for data...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- After Number sub-section -->
+  <div id="hist-after-section" style="display:none;">
+    <div class="after-num-wrap">
+      <div class="num-grid" id="num-grid"></div>
+      <div class="after-title" id="after-title">Select a number to see results after it appeared</div>
+      <div id="after-results-wrap" style="display:none;">
+        <div class="after-table-head">
+          <span>Period</span>
+          <span>No.</span>
+          <span>Color</span>
+          <span>B/S</span>
+        </div>
+        <div class="after-table-body" id="after-table-body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CALCULATOR SECTION ── -->
+<div id="section-calculator">
+  <iframe src="https://afnan-samin.github.io/wingo_step_calculator/" allow="fullscreen"></iframe>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+  <div class="admin-card">
+    <div class="admin-title">Admin Settings</div>
+    <div class="admin-field">
+      <label>Current Password (verify)</label>
+      <div style="position:relative;">
+        <input class="admin-input" type="password" id="admin-current-pw" placeholder="Enter current password" autocomplete="off">
+        <button class="toggle-pw" onclick="togglePwVis('admin-current-pw',this)" tabindex="-1">&#9673;</button>
+      </div>
+    </div>
+    <div class="admin-field">
+      <label>New Password</label>
+      <div style="position:relative;">
+        <input class="admin-input" type="password" id="admin-new-pw" placeholder="Enter new password" autocomplete="off">
+        <button class="toggle-pw" onclick="togglePwVis('admin-new-pw',this)" tabindex="-1">&#9673;</button>
+      </div>
+    </div>
+    <div class="admin-field">
+      <label>Confirm New Password</label>
+      <div style="position:relative;">
+        <input class="admin-input" type="password" id="admin-confirm-pw" placeholder="Confirm new password" autocomplete="off">
+        <button class="toggle-pw" onclick="togglePwVis('admin-confirm-pw',this)" tabindex="-1">&#9673;</button>
+      </div>
+    </div>
+    <div class="admin-row">
+      <button class="admin-save" onclick="saveAdminSettings()">Save</button>
+      <button class="admin-close" onclick="closeAdmin()">Cancel</button>
+    </div>
+    <div class="admin-msg" id="admin-msg"></div>
+  </div>
+</div>
+
+<!-- Custom popup (replaces system alerts) -->
+<div id="custom-popup-overlay">
+  <div class="custom-popup-card">
+    <div class="custom-popup-title" id="popup-title">Notice</div>
+    <div class="custom-popup-msg" id="popup-msg"></div>
+    <button class="custom-popup-btn" onclick="closePopup()">OK</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+"use strict";
+// ── FORCE LIGHT MODE ──
+document.documentElement.style.colorScheme = "light";
+if (window.matchMedia) {
+  const forceMeta = document.createElement('meta');
+  forceMeta.name = 'color-scheme';
+  forceMeta.content = 'light only';
+  document.head.appendChild(forceMeta);
+}
+
+// ── CONFIG ──
+const CFG = {
+  STORAGE_KEY:      "ht_widget_pw",
+  DEFAULT_PASSWORD: "S@m1n*^-~",
+  POLL_MS:          4000,
+  MAX_HIST_RECORDS: 1000,
+  MAX_AFTER_RECORDS: 10,
+};
+
+const SOURCE_URLS = {
+  "30s": {
+    current: "https://draw.ar-lottery01.com/WinGo/WinGo_30S.json",
+    history: "https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json",
+  },
+  "1m": {
+    current: "https://draw.ar-lottery01.com/WinGo/WinGo_1M.json",
+    history: "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json",
+  },
+};
+
+const SOURCE_HEADERS = {
+  "Referer": "https://dkwin.club/",
+  "Origin":  "https://dkwin.club",
+};
+
+// ── STATE ──
+const marketState = {
+  "30s": { logicMode: 1, l1LossStreak: 0, lastPeriod: null, lastPredicted: null, history: [], predHistory: [],
+           curWinStreak: 0, maxWinStreak: 0, curLossStreak: 0, maxLossStreak: 0 },
+  "1m":  { logicMode: 1, l1LossStreak: 0, lastPeriod: null, lastPredicted: null, history: [], predHistory: [],
+           curWinStreak: 0, maxWinStreak: 0, curLossStreak: 0, maxLossStreak: 0 },
+};
+
+let currentMarket = "30s";
+let currentSection = "website";
+let currentHistMarket = "30s";
+let currentHistTab = "all";
+let selectedAfterNum = null;
+
+// ── HELPERS ──
+const p2 = n => String(n).padStart(2,"0");
+function numberToBigSmall(n) { return n >= 5 ? "BIG" : "SMALL"; }
+
+function getNumClass(n) {
+  if (n === 0) return "num-red-violet";
+  if (n === 5) return "num-green-violet";
+  if ([1,3,7,9].includes(n)) return "num-green";
+  return "num-red";
+}
+function getBtnClass(n) {
+  if (n === 0) return "n-red-violet";
+  if (n === 5) return "n-green-violet";
+  if ([1,3,7,9].includes(n)) return "n-green";
+  return "n-red";
+}
+function getColorLabel(n) {
+  if (n === 0) return '<span class="num-red-violet">Red+Violet</span>';
+  if (n === 5) return '<span class="num-green-violet">Green+Violet</span>';
+  if ([1,3,7,9].includes(n)) return '<span class="num-green">Green</span>';
+  return '<span class="num-red">Red</span>';
+}
+
+// ── CUSTOM POPUP ──
+function showPopup(title, msg) {
+  document.getElementById("popup-title").textContent = title;
+  document.getElementById("popup-msg").textContent = msg;
+  document.getElementById("custom-popup-overlay").classList.add("show");
+}
+function closePopup() {
+  document.getElementById("custom-popup-overlay").classList.remove("show");
+}
+
+// ── TOAST ──
+function showToast(msg, ms) {
+  ms = ms || 2800;
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), ms);
+}
+
+// ── SECTION SWITCHER ──
+function switchSection(name) {
+  currentSection = name;
+  ["website","history","calculator"].forEach(s => {
+    document.getElementById("section-" + s).classList.toggle("active", s === name);
+    document.getElementById("nav-" + s).classList.toggle("active", s === name);
+  });
+  if (name === "history") renderHistorySection();
+}
+
+// ── PASSWORD / GATE ──
+function showPasswordStep() {
+  setTimeout(function() {
+    document.getElementById("gate-step1").style.display = "none";
+    document.getElementById("gate-step2").style.display = "block";
+    document.getElementById("gate-pw-input").focus();
+  }, 400);
+}
+
+const getPW = () => localStorage.getItem(CFG.STORAGE_KEY) || CFG.DEFAULT_PASSWORD;
+const setPW = pw => localStorage.setItem(CFG.STORAGE_KEY, pw);
+
+function checkPassword() {
+  const val = document.getElementById("gate-pw-input").value.trim();
+  const errEl = document.getElementById("gate-error");
+  if (val === getPW()) {
+    document.getElementById("password-gate").style.display = "none";
+    document.getElementById("bottom-nav").style.display = "block";
+    document.getElementById("floating-widget").style.display = "block";
+    startClock();
+    startPolling();
+  } else {
+    errEl.textContent = "Incorrect password. Please try again.";
+    document.getElementById("gate-pw-input").value = "";
+    document.getElementById("gate-pw-input").focus();
+    document.getElementById("gate-pw-input").style.borderColor = "rgba(255,77,109,0.7)";
+    setTimeout(() => { document.getElementById("gate-pw-input").style.borderColor = ""; }, 1200);
+  }
+}
+document.getElementById("gate-pw-input").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") checkPassword();
+});
+
+function togglePwVis(id, btn) {
+  const el = document.getElementById(id);
+  if (el.type === "password") { el.type = "text"; btn.innerHTML = "&#9679;"; }
+  else { el.type = "password"; btn.innerHTML = "&#9673;"; }
+}
+
+// ── ADMIN ──
+let _clicks = 0, _ct = null;
+document.getElementById("brand-name-click").addEventListener("click", function() {
+  _clicks++;
+  if (_clicks === 3) { openAdmin(); _clicks = 0; clearTimeout(_ct); return; }
+  clearTimeout(_ct);
+  _ct = setTimeout(function() { _clicks = 0; }, 600);
+});
+function openAdmin() {
+  document.getElementById("admin-panel").style.display = "flex";
+  document.getElementById("admin-msg").textContent = "";
+  ["admin-current-pw","admin-new-pw","admin-confirm-pw"].forEach(function(id) {
+    document.getElementById(id).value = "";
+  });
+}
+function closeAdmin() { document.getElementById("admin-panel").style.display = "none"; }
+function saveAdminSettings() {
+  const cur  = document.getElementById("admin-current-pw").value;
+  const nw   = document.getElementById("admin-new-pw").value.trim();
+  const conf = document.getElementById("admin-confirm-pw").value.trim();
+  const msg  = document.getElementById("admin-msg");
+  if (cur !== getPW())  { msg.style.color = "#ff6b6b"; msg.textContent = "Current password is incorrect."; return; }
+  if (nw.length < 4)    { msg.style.color = "#ff6b6b"; msg.textContent = "Password must be at least 4 chars."; return; }
+  if (nw !== conf)      { msg.style.color = "#ff6b6b"; msg.textContent = "Passwords do not match."; return; }
+  setPW(nw);
+  msg.style.color = "#00e5a0";
+  msg.textContent = "Password updated successfully.";
+  setTimeout(closeAdmin, 1400);
+}
+
+// ── MARKET SWITCH (widget) ──
+function switchMarket(key) {
+  currentMarket = key;
+  document.getElementById("tab-30s").classList.toggle("active", key === "30s");
+  document.getElementById("tab-1m").classList.toggle("active",  key === "1m");
+  fetchData(key);
+}
+
+// ── WIDGET CONTROLS ──
+function minimizeWidget() {
+  const fw = document.getElementById("floating-widget");
+  const pill = document.getElementById("mini-pill");
+  const rect = fw.getBoundingClientRect();
+  pill.style.top  = rect.top + "px";
+  pill.style.left = rect.left + "px";
+  pill.style.right = "auto";
+  fw.style.display   = "none";
+  pill.style.display = "block";
+}
+function restoreWidget() {
+  const pill = document.getElementById("mini-pill");
+  const fw   = document.getElementById("floating-widget");
+  const rect = pill.getBoundingClientRect();
+  fw.style.top   = rect.top + "px";
+  fw.style.left  = rect.left + "px";
+  fw.style.right = "auto";
+  pill.style.display = "none";
+  fw.style.display   = "block";
+}
+function exitWidget() {
+  document.getElementById("floating-widget").style.display = "none";
+  document.getElementById("mini-pill").style.display       = "none";
+  showToast("Widget closed. Refresh to reopen.");
+}
+
+// ── DRAGGABLE ──
+function makeDraggable(el) {
+  let ox, oy, active = false;
+  const onStart = function(cx, cy) {
+    const r = el.getBoundingClientRect();
+    ox = cx - r.left; oy = cy - r.top;
+    active = true; el.style.transition = "none"; el.style.right = "auto";
+  };
+  const onMove = function(cx, cy) {
+    if (!active) return;
+    const maxX = window.innerWidth  - el.offsetWidth;
+    const maxY = window.innerHeight - el.offsetHeight;
+    el.style.left = Math.max(0, Math.min(maxX, cx - ox)) + "px";
+    el.style.top  = Math.max(0, Math.min(maxY, cy - oy)) + "px";
+  };
+  const onEnd = function() { active = false; };
+  el.addEventListener("mousedown", function(e) { if (e.button === 0) onStart(e.clientX, e.clientY); });
+  document.addEventListener("mousemove", function(e) { onMove(e.clientX, e.clientY); });
+  document.addEventListener("mouseup", onEnd);
+  el.addEventListener("touchstart", function(e) { const t = e.touches[0]; onStart(t.clientX, t.clientY); }, {passive:true});
+  document.addEventListener("touchmove", function(e) { const t = e.touches[0]; onMove(t.clientX, t.clientY); }, {passive:true});
+  document.addEventListener("touchend", onEnd);
+}
+makeDraggable(document.getElementById("floating-widget"));
+makeDraggable(document.getElementById("mini-pill"));
+
+// ── CLOCK ──
+function startClock() {
+  function tick() {
+    const d = new Date();
+    let h = d.getHours(), m = d.getMinutes(), s = d.getSeconds();
+    const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12;
+    const el = document.getElementById("live-time");
+    if (el) el.textContent = p2(h) + ":" + p2(m) + ":" + p2(s) + " " + ap;
+  }
+  tick(); setInterval(tick, 1000);
+}
+
+// ── DATA FETCHING ──
+async function fetchSource(url) {
+  const ts = Date.now();
+  const r = await fetch(url + "?ts=" + ts, { headers: SOURCE_HEADERS, cache: "no-store" });
+  if (!r.ok) throw new Error("HTTP " + r.status);
+  return r.json();
+}
+
+async function processMarket(mk) {
+  const md = marketState[mk];
+  const modeLabel = mk === "30s" ? "WinGo 30sec" : "WinGo 1Min";
+
+  const [curData, histData] = await Promise.all([
+    fetchSource(SOURCE_URLS[mk].current),
+    fetchSource(SOURCE_URLS[mk].history),
+  ]);
+
+  const rawList = ((histData.data || {}).list || []);
+  const hist = [];
+  for (const item of rawList) {
+    try {
+      const num = parseInt(item.number || 0, 10);
+      hist.push({ period: item.issueNumber || "", number: num, big_small: numberToBigSmall(num) });
+    } catch(e) {}
+  }
+  if (hist.length) md.history = hist.slice(0, CFG.MAX_HIST_RECORDS);
+
+  const cur = curData.current || {};
+  const period    = cur.issueNumber || "";
+  const endTs     = cur.endTime || 0;
+  const remaining = Math.max(0, Math.floor((endTs - Date.now()) / 1000));
+
+  let win_result = null;
+  if (md.lastPeriod && md.lastPeriod !== period && md.history.length) {
+    const prevList = md.history.filter(h => h.period === md.lastPeriod);
+    const prevPred = md.lastPredicted;
+    if (prevList.length && prevPred && prevPred !== "WAIT") {
+      const actual = prevList[0].big_small;
+      const won    = actual === prevPred;
+      win_result   = won ? "WIN" : "LOSS";
+
+      md.predHistory.unshift({
+        period:    md.lastPeriod,
+        number:    prevList[0].number,
+        big_small: actual,
+        predicted: prevPred,
+        result:    won ? "Win" : "Loss",
+      });
+      if (md.predHistory.length > CFG.MAX_HIST_RECORDS) md.predHistory.pop();
+
+      // Streak record tracking
+      if (won) {
+        md.curWinStreak++;
+        md.curLossStreak = 0;
+        if (md.curWinStreak > md.maxWinStreak) md.maxWinStreak = md.curWinStreak;
+      } else {
+        md.curLossStreak++;
+        md.curWinStreak = 0;
+        if (md.curLossStreak > md.maxLossStreak) md.maxLossStreak = md.curLossStreak;
+      }
+    }
+  }
+  md.lastPeriod = period;
+
+  let pred, label, logicNum;
+  if (!md.history.length) {
+    pred = "WAIT"; label = "Collecting data..."; logicNum = 1;
+  } else {
+    const last = md.history[0].big_small;
+    if (md.logicMode === 1) {
+      pred = last; label = "Logic 1 - Follow (" + last + ")"; logicNum = 1;
+    } else {
+      pred = last === "BIG" ? "SMALL" : "BIG";
+      label = "Logic 2 - Reverse (" + last + " -> " + pred + ")"; logicNum = 2;
+    }
+  }
+  md.lastPredicted = pred;
+
+  return { period, prediction: pred, logic: label, logic_num: logicNum, countdown: remaining, mode: modeLabel, win_result };
+}
+
+// ── UPDATE WIDGET UI ──
+function updateWidget(market, d) {
+  if (market !== currentMarket) return;
+  const pred   = (d.prediction || "WAIT").toUpperCase();
+  const predEl = document.getElementById("predict-label");
+  if (predEl) { predEl.textContent = pred; predEl.className = "predict-label " + pred; }
+
+  const pn = document.getElementById("period-number");
+  if (pn) pn.textContent = d.period || "—";
+  const lt = document.getElementById("logic-text");
+  if (lt) lt.textContent = d.logic || "";
+  if (typeof d.countdown === "number") {
+    const cv = document.getElementById("countdown-val");
+    if (cv) cv.textContent = d.countdown;
+  }
+  const mb = document.getElementById("mode-badge");
+  if (mb) mb.textContent = d.mode || (market === "30s" ? "WinGo 30sec" : "WinGo 1Min");
+
+  const badge = document.getElementById("logic-badge");
+  if (badge) {
+    const isL2 = d.logic_num === 2;
+    badge.textContent = isL2 ? "Logic 2" : "Logic 1";
+    badge.className   = "logic-badge " + (isL2 ? "l2" : "l1");
+  }
+
+  const pillEl = document.getElementById("pill-label");
+  if (pillEl) { pillEl.textContent = pred === "WAIT" ? "--" : pred; pillEl.className = "pill-label " + pred; }
+  const pp = document.getElementById("pill-period");
+  if (pp) pp.textContent = "P: " + (d.period || "------").slice(-6);
+
+  // Refresh history section if visible
+  if (currentSection === "history") renderHistorySection();
+}
+
+function setStatus(online, msg) {
+  const dot = document.getElementById("status-dot");
+  const txt = document.getElementById("status-text");
+  if (dot) dot.className = "status-dot" + (online ? "" : " offline");
+  if (txt) txt.textContent = msg;
+}
+
+async function fetchData(market) {
+  try {
+    const data = await processMarket(market);
+    updateWidget(market, data);
+    if (market === currentMarket) setStatus(true, "Live — connected.");
+  } catch(e) {
+    if (market === currentMarket) setStatus(false, "Source unreachable — retrying...");
+  }
+}
+
+function startPolling() {
+  Object.keys(SOURCE_URLS).forEach(function(mk) {
+    fetchData(mk);
+    setInterval(function() { fetchData(mk); }, CFG.POLL_MS);
+  });
+}
+
+// ── HISTORY SECTION ──
+function switchHistMarket(mk) {
+  currentHistMarket = mk;
+  document.getElementById("hm-30s").classList.toggle("active", mk === "30s");
+  document.getElementById("hm-1m").classList.toggle("active",  mk === "1m");
+  renderHistorySection();
+}
+
+function switchHistTab(tab) {
+  currentHistTab = tab;
+  document.getElementById("htab-all").classList.toggle("active",   tab === "all");
+  document.getElementById("htab-after").classList.toggle("active", tab === "after");
+  document.getElementById("hist-all-section").style.display   = tab === "all"   ? "block" : "none";
+  document.getElementById("hist-after-section").style.display = tab === "after" ? "block" : "none";
+  renderHistorySection();
+}
+
+function renderHistorySection() {
+  if (currentHistTab === "all") renderAllHistory();
+  else renderAfterNumberSection();
+  updateStreakDisplay();
+}
+
+function updateStreakDisplay() {
+  const md = marketState[currentHistMarket];
+  const winEl  = document.getElementById("streak-win-label");
+  const lossEl = document.getElementById("streak-loss-label");
+  if (winEl)  winEl.textContent  = "Win streak: "  + md.maxWinStreak;
+  if (lossEl) lossEl.textContent = "Loss streak: " + md.maxLossStreak;
+}
+
+function renderAllHistory() {
+  const md = marketState[currentHistMarket];
+  // Combine raw history + pred history
+  // Use predHistory (has more info), fall back to raw history
+  const records = md.predHistory.slice(0, CFG.MAX_HIST_RECORDS);
+  const body  = document.getElementById("hist-all-body");
+  const badge = document.getElementById("hist-count-badge");
+
+  if (!records.length) {
+    body.innerHTML = '<div class="hist-empty">No history yet — data loads after a few cycles.</div>';
+    badge.textContent = "0 records";
+    return;
+  }
+
+  badge.textContent = records.length + " records (last " + CFG.MAX_HIST_RECORDS + ")";
+
+  body.innerHTML = records.map(function(h) {
+    const numCls = getNumClass(h.number);
+    const bsCls  = h.big_small === "BIG" ? "bs-big" : "bs-small";
+    const predCls = h.predicted === "BIG" ? "pred-big" : (h.predicted === "SMALL" ? "pred-small" : "pred-wait");
+    const resCls  = h.result === "Win" ? "res-win" : "res-loss";
+    return '<div class="hist-row">' +
+      '<span class="hist-period">' + (h.period || "").slice(-10) + '</span>' +
+      '<span class="' + numCls + '">' + h.number + '</span>' +
+      '<span class="' + bsCls + '">' + h.big_small + '</span>' +
+      '<span class="' + predCls + '">' + (h.predicted || "—") + '</span>' +
+      '<span class="' + resCls + '">' + (h.result || "—") + '</span>' +
+    '</div>';
+  }).join("");
+}
+
+function renderAfterNumberSection() {
+  // Build number grid 0-9
+  const grid = document.getElementById("num-grid");
+  if (!grid.children.length) {
+    grid.innerHTML = "";
+    for (let i = 0; i <= 9; i++) {
+      const btn = document.createElement("button");
+      btn.className = "num-btn " + getBtnClass(i);
+      btn.textContent = i;
+      btn.dataset.num = i;
+      btn.onclick = (function(n) { return function() { selectAfterNum(n); }; })(i);
+      grid.appendChild(btn);
+    }
+  }
+
+  if (selectedAfterNum !== null) {
+    renderAfterResults(selectedAfterNum);
+  }
+}
+
+function selectAfterNum(n) {
+  selectedAfterNum = n;
+  // Update selected state
+  document.querySelectorAll(".num-btn").forEach(function(btn) {
+    btn.classList.toggle("selected", parseInt(btn.dataset.num) === n);
+  });
+  renderAfterResults(n);
+}
+
+function renderAfterResults(n) {
+  const md = marketState[currentHistMarket];
+  // Use raw history to find "next after n"
+  const rawHist = md.history.slice().reverse(); // oldest first
+
+  const results = [];
+  for (let i = 0; i < rawHist.length - 1; i++) {
+    if (rawHist[i].number === n) {
+      const next = rawHist[i + 1];
+      results.push({
+        period:    next.period,
+        number:    next.number,
+        big_small: next.big_small,
+      });
+    }
+  }
+  // Show last 10, most recent first
+  const display = results.reverse().slice(0, CFG.MAX_AFTER_RECORDS);
+
+  const titleEl = document.getElementById("after-title");
+  const wrap    = document.getElementById("after-results-wrap");
+  const tbody   = document.getElementById("after-table-body");
+
+  titleEl.textContent = "Results after number " + n + " appeared (last " + CFG.MAX_AFTER_RECORDS + ")";
+
+  if (!display.length) {
+    wrap.style.display = "none";
+    titleEl.textContent = "No data found for number " + n + " yet. More data loads with time.";
+    return;
+  }
+
+  wrap.style.display = "block";
+  tbody.innerHTML = display.map(function(r) {
+    const numCls = getNumClass(r.number);
+    const bsCls  = r.big_small === "BIG" ? "bs-big" : "bs-small";
+    return '<div class="after-row">' +
+      '<span style="font-size:9.5px;color:rgba(255,255,255,0.85);">' + r.period.slice(-10) + '</span>' +
+      '<span class="' + numCls + '">' + r.number + '</span>' +
+      '<td>' + getColorLabel(r.number) + '</td>' +
+      '<span class="' + bsCls + '">' + r.big_small + '</span>' +
+    '</div>';
+  }).join("");
+}
+
+// On initial load of history section, render after-number grid
+(function buildNumGrid() {
+  const grid = document.getElementById("num-grid");
+  for (let i = 0; i <= 9; i++) {
+    const btn = document.createElement("button");
+    btn.className = "num-btn " + getBtnClass(i);
+    btn.textContent = i;
+    btn.dataset.num = i;
+    btn.onclick = (function(n) { return function() { selectAfterNum(n); }; })(i);
+    grid.appendChild(btn);
+  }
+})();
+
+document.documentElement.style.colorScheme = "light";
+</script>
+</body>
+</html>
